@@ -29,6 +29,13 @@ app.get("/api/categories", (req, res) => {
   });
 });
 
+app.get("/api/dua", (req, res) => {
+  connectDB.all("SELECT * FROM dua", [], (err, rows) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json(rows);
+  });
+});
+
 app.get("/api/subcategories", (req, res) => {
   connectDB.all("SELECT * FROM sub_category", [], (err, rows) => {
     if (err) {
