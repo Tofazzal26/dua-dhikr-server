@@ -3,6 +3,7 @@ const sqlite3 = require("sqlite3").verbose();
 const app = express();
 const cors = require("cors");
 const port = process.env.PORT || 4000;
+const path = require("path");
 app.use(
   cors({
     origin: ["http://localhost:3000"],
@@ -12,12 +13,30 @@ app.use(
 app.use(express.json());
 require("dotenv").config();
 
-const connectDB = new sqlite3.Database("/database/dua_main.sqlite", (err) => {
+const dbPath = path.resolve(__dirname, "database", "dua_main.sqlite");
+const connectDB = new sqlite3.Database(dbPath, (err) => {
   if (err) {
     console.log("Database Error", err?.message);
   } else {
     console.log("Sqlite Connected");
   }
+});
+
+app.get("/api/categories", (req, res) => {
+  connectDB.all("SELECT * FROM category", [], (err, rows) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json(rows);
+  });
+});
+
+app.get("/api/subcategories", (req, res) => {
+  connectDB.all("SELECT * FROM sub_category", [], (err, rows) => {
+    if (err) {
+      res.status(500).json({ error: err.message });
+    } else {
+      res.json(rows);
+    }
+  });
 });
 
 app.get("/", (req, res) => {
