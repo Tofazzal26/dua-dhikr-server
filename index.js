@@ -22,21 +22,24 @@ const connectDB = new sqlite3.Database(dbPath, (err) => {
   }
 });
 
-app.get("/api/categories", (req, res) => {
-  connectDB.all("SELECT * FROM category", [], (err, rows) => {
+app.get("/api/categories", async (req, res) => {
+  const searchCategory = req.query.search || "";
+  const query = "SELECT * FROM category WHERE cat_name_en LIKE ?";
+  const searchValue = `%${searchCategory}%`;
+  connectDB.all(query, [searchValue], (err, rows) => {
     if (err) return res.status(500).json({ error: err.message });
     res.json(rows);
   });
 });
 
-app.get("/api/dua", (req, res) => {
+app.get("/api/dua", async (req, res) => {
   connectDB.all("SELECT * FROM dua", [], (err, rows) => {
     if (err) return res.status(500).json({ error: err.message });
     res.json(rows);
   });
 });
 
-app.get("/api/subcategories", (req, res) => {
+app.get("/api/subcategories", async (req, res) => {
   connectDB.all("SELECT * FROM sub_category", [], (err, rows) => {
     if (err) {
       res.status(500).json({ error: err.message });
